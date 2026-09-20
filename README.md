@@ -122,6 +122,17 @@ In `boards/shields/adept/adept_board.overlay`, find the `&pointer_accel` section
 - **BLE re-pair**: Hold all 4 upper keys
 - **Flash firmware**: Combo 0+3+4+5 for bootloader, or open the back cover and double-tap the RESET button on the MCU
 
+### How to Modify, Build and Flash
+
+1. **Fork** this repo (or clone it directly if you have write access)
+2. **Edit** the config files on GitHub or locally:
+   - `config/adept.keymap` — key bindings, combos, layers
+   - `config/adept.conf` — Kconfig options (report rate, BLE, sensor sleep, etc.)
+   - `boards/shields/adept/adept_board.overlay` — acceleration curve, input pipeline
+3. **Commit & Push** — GitHub Actions will automatically build the firmware
+4. **Download** — go to the repo's **Actions** tab, click the latest successful run, download the `firmware` artifact (contains `.uf2` files)
+5. **Flash** — enter bootloader (combo 0+3+4+5, or open back cover and double-tap MCU RESET), drag `zmk.uf2` to the mounted USB drive
+
 ---
 
 ## 中文
@@ -237,3 +248,14 @@ In `boards/shields/adept/adept_board.overlay`, find the `&pointer_accel` section
 - **媒体控制**：进入滚动层后，键 0/1/2 分别为播放暂停/音量减/音量加
 - **蓝牙重新配对**：上排四键同时按住
 - **刷固件**：同时按键 0+3+4+5 进入 Bootloader，或打开后盖双击主控上的 RESET 按钮
+
+### 如何修改代码、构建并刷入固件
+
+1. **Fork** 本仓库（或直接 clone，如果你有写权限）
+2. **修改**配置文件（在 GitHub 网页上或本地编辑）：
+   - `config/adept.keymap` — 按键绑定、组合键、层
+   - `config/adept.conf` — Kconfig 选项（报告率、BLE、传感器休眠等）
+   - `boards/shields/adept/adept_board.overlay` — 加速曲线、输入处理流水线
+3. **提交并推送** — GitHub Actions 会自动构建固件
+4. **下载固件** — 进入仓库的 **Actions** 页面，点击最新一次成功的构建，下载 `firmware` 产物（包含 `.uf2` 文件）
+5. **刷入** — 进入 Bootloader（组合键 0+3+4+5，或打开后盖双击主控 RESET），将 `zmk.uf2` 拖入弹出的 USB 存储盘
