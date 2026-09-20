@@ -17,22 +17,22 @@ Features: ZMK Studio | Scroll layer | Cursor acceleration | 125Hz report rate
 6 buttons in two rows:
 
 ```
- [0]  [1]  [2]  [3]      ← Upper side buttons (0 & 3 slightly lower than 1 & 2)
- [4]            [5]      ← Lower main buttons (left click, right click)
+ [0]  [1]  [2]  [3]      ← Upper buttons (0 & 3 slightly lower than 1 & 2)
+ [4]            [5]      ← Lower buttons (left click, right click)
 ```
 
 Trackball sits in the center area.
 
 ### Layer 0: Mouse Layer (Default)
 
-Trackball controls cursor with acceleration curve (0.8x ~ 3.0x).
+Trackball controls cursor with acceleration curve (1.0x ~ 3.0x).
 
 | Key | Function | Note |
 |-----|----------|------|
-| 0 | Ctrl+PageUp | Previous browser tab |
-| 1 | Mouse Back (MB4) | Browser back |
-| 2 | Mouse Forward (MB5) | Browser forward |
-| 3 | **Tap**: Ctrl+PageDown / **Hold**: Temp scroll layer | Next tab / Trackball becomes scroll wheel while held |
+| 0 | Ctrl+PageUp | Keyboard shortcut |
+| 1 | Mouse Back (MB4) | Mouse button 4 |
+| 2 | Mouse Forward (MB5) | Mouse button 5 |
+| 3 | **Tap**: Ctrl+PageDown / **Hold**: Temp scroll layer | Layer-Tap behavior |
 | 4 | Left Click (MB1) | — |
 | 5 | Right Click (MB2) | — |
 
@@ -78,6 +78,40 @@ Press specified keys simultaneously to trigger. Works across layers without swit
 | Clear BLE Pairing | 0 + 1 + 2 + 3 | 0 | All 4 upper keys |
 | Enter Bootloader | 0 + 3 + 4 + 5 | 0 | For firmware flashing |
 
+### Acceleration Curve Tuning
+
+The cursor speeds up when you move the trackball faster. Edit `&pointer_accel` in `boards/shields/adept/adept_board.overlay` to adjust. Rebuild and flash after changes.
+
+**Common adjustments:**
+
+| I want to... | Parameter | Plain explanation |
+|--------------|-----------|-------------------|
+| Cursor moves too slow overall | Increase `sensitivity` (e.g. 800 → 1000) | Think of it as a global speed dial for the cursor |
+| Cursor moves too fast overall | Decrease `sensitivity` (e.g. 800 → 600) | Turns down the base speed |
+| Fast flicks don't go far enough | Increase `max-factor` (e.g. 3000 → 4000) | Raises the top speed ceiling when you flick hard |
+| Fast flicks are too jumpy | Decrease `max-factor` (e.g. 3000 → 2000) | Lowers the top speed ceiling so it doesn't fly away |
+| Acceleration kicks in too early | Increase `speed-threshold` (e.g. 900 → 1200) | You need to move faster before the speed boost starts |
+| Acceleration kicks in too late | Decrease `speed-threshold` (e.g. 900 → 600) | Even gentle movements get a speed boost |
+| Want near-zero acceleration (linear feel) | Set `min-factor` and `max-factor` to the same value | Cursor moves at a constant ratio regardless of speed |
+
+> Values use 1/1000 scale: 1000 = 1.0x, 800 = 0.8x, 3000 = 3.0x
+
+**Example: "I want less acceleration and more precision"**
+
+In `boards/shields/adept/adept_board.overlay`, find the `&pointer_accel` section and change:
+
+```dts
+&pointer_accel {
+    // ...
+    sensitivity = <800>;              // was 800, keep as is
+    max-factor = <2000>;              // was 3000 → lower top speed for less jumpiness
+    speed-threshold = <1200>;         // was 900  → need faster movement to trigger acceleration
+    speed-max = <2400>;               // was 1800 → wider ramp-up range, smoother transition
+    min-factor = <1000>;              // was 1000, keep as is
+    // ...
+};
+```
+
 ### Quick Reference
 
 - **Browser tabs**: Key 0 (prev) / Tap key 3 (next)
@@ -86,7 +120,7 @@ Press specified keys simultaneously to trigger. Works across layers without swit
 - **Middle click**: Press left + right (4+5) together
 - **Media**: Enter scroll layer, key 0/1/2 = play-pause / vol down / vol up
 - **BLE re-pair**: Hold all 4 upper keys
-- **Flash firmware**: Combo 0+3+4+5 for bootloader, or double-tap hardware RESET
+- **Flash firmware**: Combo 0+3+4+5 for bootloader, or open the back cover and double-tap the RESET button on the MCU
 
 ---
 
@@ -97,22 +131,22 @@ Press specified keys simultaneously to trigger. Works across layers without swit
 鼠标共 6 个按键，分上下两排：
 
 ```
- [0]  [1]  [2]  [3]      ← 上排侧键（0、3 略低于 1、2）
- [4]            [5]      ← 下排主键（左键、右键）
+ [0]  [1]  [2]  [3]      ← 上排按键（0、3 略低于 1、2）
+ [4]            [5]      ← 下排按键（左键、右键）
 ```
 
 轨迹球位于按键中央区域。
 
 ### Layer 0：鼠标层（默认）
 
-轨迹球控制光标移动，带加速曲线（0.8x ~ 3.0x）。
+轨迹球控制光标移动，带加速曲线（1.0x ~ 3.0x）。
 
 | 键位 | 功能 | 说明 |
 |------|------|------|
-| 0 | Ctrl+PageUp | 上一个浏览器标签页 |
-| 1 | 鼠标后退 (MB4) | 浏览器后退 |
-| 2 | 鼠标前进 (MB5) | 浏览器前进 |
-| 3 | **点按**: Ctrl+PageDown / **长按**: 临时切换到滚动层 | 下一个标签页 / 按住时轨迹球变滚轮 |
+| 0 | Ctrl+PageUp | 键盘快捷键 |
+| 1 | 鼠标后退 (MB4) | 鼠标第 4 键 |
+| 2 | 鼠标前进 (MB5) | 鼠标第 5 键 |
+| 3 | **点按**: Ctrl+PageDown / **长按**: 临时切换到滚动层 | Layer-Tap 行为 |
 | 4 | 左键 (MB1) | — |
 | 5 | 右键 (MB2) | — |
 
@@ -158,6 +192,42 @@ Press specified keys simultaneously to trigger. Works across layers without swit
 | 清除蓝牙配对 | 0 + 1 + 2 + 3 | 0 | 上排四键全按 |
 | 进入 Bootloader | 0 + 3 + 4 + 5 | 0 | 用于刷固件 |
 
+### 加速曲线调参
+
+光标会在快速滑动轨迹球时自动加速。修改 `boards/shields/adept/adept_board.overlay` 中的 `&pointer_accel` 节点来调整手感，改完需重新编译刷入固件。
+
+**常见调整：**
+
+| 我想要... | 怎么改 | 通俗解释 |
+|-----------|--------|----------|
+| 光标整体太慢 | 调大 `sensitivity`（如 800 → 1000） | 相当于全局速度旋钮，越大光标越快 |
+| 光标整体太快 | 调小 `sensitivity`（如 800 → 600） | 把基础速度调低 |
+| 快速甩动不够远 | 调大 `max-factor`（如 3000 → 4000） | 提高猛甩时的速度上限，甩得更远 |
+| 快速甩动太飘 | 调小 `max-factor`（如 3000 → 2000） | 降低速度上限，猛甩也不会飞太远 |
+| 加速太灵敏，轻轻动就飞 | 调大 `speed-threshold`（如 900 → 1200） | 要滑得更快才会触发加速 |
+| 加速太迟钝，要很用力才加速 | 调小 `speed-threshold`（如 900 → 600） | 轻轻滑就能触发加速 |
+| 不想要加速，想要线性手感 | 把 `min-factor` 和 `max-factor` 设成一样 | 不管滑多快，光标速度倍率都一样 |
+
+> 数值用千分比：1000 = 1.0 倍，800 = 0.8 倍，3000 = 3.0 倍
+
+**示例：「我想要少一点加速、多一点精确」**
+
+打开 `boards/shields/adept/adept_board.overlay`，找到 `&pointer_accel` 部分，修改为：
+
+```dts
+&pointer_accel {
+    // ...
+    sensitivity = <800>;              // 原 800，保持不变
+    max-factor = <2000>;              // 原 3000 → 降低极速，甩动不会飞太远
+    speed-threshold = <1200>;         // 原 900  → 要滑得更快才开始加速
+    speed-max = <2400>;               // 原 1800 → 加速过渡更平缓
+    min-factor = <1000>;              // 原 1000，保持不变
+    // ...
+};
+```
+
+修改后需重新构建固件并刷入。
+
 ### 日常使用速查
 
 - **浏览器标签页切换**：键 0（上一页）/ 点按键 3（下一页）
@@ -166,4 +236,4 @@ Press specified keys simultaneously to trigger. Works across layers without swit
 - **中键点击**：同时按左右键（4+5）
 - **媒体控制**：进入滚动层后，键 0/1/2 分别为播放暂停/音量减/音量加
 - **蓝牙重新配对**：上排四键同时按住
-- **刷固件**：同时按键 0+3+4+5 进入 Bootloader，或双击硬件 RESET 按钮
+- **刷固件**：同时按键 0+3+4+5 进入 Bootloader，或打开后盖双击主控上的 RESET 按钮
