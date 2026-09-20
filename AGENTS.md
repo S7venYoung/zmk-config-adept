@@ -2,40 +2,48 @@
 
 This file provides guidance to codeflicker when working with code in this repository.
 
-## WHY: Purpose and Goals
+## WHY: 项目目标
 
-ZMK firmware configuration for a 3-pin modded Ploopy Adept trackball running on Seeeduino XIAO BLE (nRF52840). Features ZMK Studio runtime remapping, scroll layer, PMW3610 cursor acceleration, and BLE report rate optimization (~125Hz).
+为 Ploopy Adept BLE 鼠标（3 针改装版）提供 ZMK 固件配置，基于 Seeeduino XIAO BLE (nRF52840)，实现 6 键布局 + 光学追踪 + BLE 无线连接。
 
-## WHAT: Technical Stack
+## WHAT: 技术栈
 
-- **Firmware:** ZMK (Zephyr-based)
-- **MCU:** Seeeduino XIAO BLE (nRF52840)
-- **Sensor:** PMW3610 optical (SPI, 600 CPI)
-- **Build system:** west (Zephyr)
-- **CI:** GitHub Actions (ZMK official build workflow)
-- **External modules:** zmk-pmw3610-driver (efogdev), zmk-input-processor-report-rate-limit (badjeff), zmk-pointing-acceleration-alpha (nuovotaka)
+- **固件框架**: ZMK Firmware (Zephyr RTOS)
+- **硬件**: Seeeduino XIAO BLE (nRF52840) + PMW3610 光学传感器
+- **依赖管理**: west (west.yml)
+- **关键模块**: PMW3610 驱动 (efogdev)、报告率限制器 (badjeff)、指针加速 (nuovotaka)
+- **CI/CD**: GitHub Actions 自动编译
 
-## HOW: Core Development Workflow
+## HOW: 核心开发流程（Podman 容器）
 
 ```bash
-# Build firmware via GitHub Actions (push to trigger)
-git push
+# 启动容器（宿主机）
+podman run -it --rm --security-opt label=disable \
+  --workdir /workspace \
+  -v ~/kbd/zmk:/workspace \
+  -v ~/kbd/zmk-config-adept:/workspaces/zmk-config \
+  zmk-dev /bin/bash
 
-# Local build (requires west + ZMK toolchain installed)
-west build -b xiao_ble -s app
+# 容器内：更新依赖
+west update
 
-# Build settings reset firmware
-west build -b xiao_ble -s app -- -DSHIELD=settings_reset
+# 容器内：构建固件
+west build -b xiao_ble -s zmk/app -- \
+  -DZMK_CONFIG="/workspaces/zmk-config/config" \
+  -DSHIELD=adept_board \
+  '-DZMK_EXTRA_MODULES=/workspaces/zmk-config;/workspace/zmk-pmw3610-driver;/workspace/zmk-input-processor-report-rate-limit;/workspace/zmk-pointing-acceleration-alpha'
 
-# Init submodules
-git submodule update --init --recursive
+# 闪烧：双击 RESET 进入 Bootloader，拖拽 build/zephyr/zmk.uf2
 ```
 
-## Progressive Disclosure
+主要修改文件：
+- `config/adept.keymap` — 键盘映射与行为
+- `config/adept.conf` — Kconfig 编译选项
+- `boards/shields/adept/adept_board.overlay` — 硬件输入处理配置
 
-For detailed information, consult these documents as needed:
+## 渐进式文档
 
-- `docs/agent/development_commands.md` - Build, flash, and west commands
-- `docs/agent/architecture.md` - Shield structure, input pipeline, layer/combo system
+- `docs/agent/architecture.md` — 模块结构与架构模式
+- `docs/agent/development_commands.md` — 完整构建与配置命令参考
 
-**When working on a task, first determine which documentation is relevant, then read only those files.**
+**处理任务时，先判断哪些文档与当前任务相关，再按需查阅。**
