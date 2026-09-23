@@ -1,9 +1,10 @@
 include:
-  - board: seeeduino_xiao_ble
+  - artifact: adept
+    board: xiao_ble//zmk
     shield: adept_board
-    # snippet: zmk-usb-logging
-    snippet: studio-rpc-usb-uart
-    cmake-args: -DCONFIG_ZMK_STUDIO=y
+    snippets:
+      - studio-rpc-usb-uart
 
-  - board: seeeduino_xiao_ble
+  - artifact: adept_reset
+    board: xiao_ble//zmk
     shield: settings_reset

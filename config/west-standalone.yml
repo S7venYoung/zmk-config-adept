@@ -1,0 +1,7 @@
+# Initialize a self-contained workspace with: west init -l config --mf west-standalone.yml
+manifest:
+  self:
+    path: config
+    import:
+      file: west-dependency.yml
+      path-prefix: dependencies

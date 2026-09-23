@@ -3,4 +3,28 @@ on: [push, pull_request, workflow_dispatch]
 
 jobs:
   build:
-    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@v0.3
+    runs-on: ubuntu-latest
+    container:
+      image: zmkfirmware/zmk-build-arm:stable
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        with:
+          path: dependencies/
+          key: ${{ runner.os }}-dya-zmk04-${{ hashFiles('config/west*.yml') }}
+      - name: Initialize ZMK 0.4 + DYA dependencies
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          west init -l config --mf west-standalone.yml
+          west update --narrow
+          west zephyr-export
+      - name: Build firmware
+        run: west zmk-build -d build -q
+      - name: Collect firmware
+        run: |
+          mkdir -p artifacts
+          find build -type f -path '*/zephyr/zmk.uf2' -exec cp {} artifacts/ \;
+      - uses: actions/upload-artifact@v4
+        with:
+          name: firmware
+          path: artifacts

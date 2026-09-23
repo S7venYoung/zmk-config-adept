@@ -11,7 +11,7 @@ This file provides guidance to codeflicker when working with code in this reposi
 - **固件框架**: ZMK Firmware (Zephyr RTOS)
 - **硬件**: Seeeduino XIAO BLE (nRF52840) + PMW3610 光学传感器
 - **依赖管理**: west (west.yml)
-- **关键模块**: PMW3610 驱动 (efogdev)、报告率限制器 (badjeff)、指针加速 (nuovotaka)
+- **关键模块**: DYA Studio PMW3610 驱动、运行时输入处理器、BLE／设置 RPC
 - **CI/CD**: GitHub Actions 自动编译
 
 ## HOW: 核心开发流程（Podman 容器）
@@ -28,10 +28,10 @@ podman run -it --rm --security-opt label=disable \
 west update
 
 # 容器内：构建固件
-west build -b xiao_ble -s zmk/app -- \
-  -DZMK_CONFIG="/workspaces/zmk-config/config" \
-  -DSHIELD=adept_board \
-  '-DZMK_EXTRA_MODULES=/workspaces/zmk-config;/workspace/zmk-pmw3610-driver;/workspace/zmk-input-processor-report-rate-limit;/workspace/zmk-pointing-acceleration-alpha'
+west init -l config --mf west-standalone.yml
+west update --narrow
+west zephyr-export
+west zmk-build -d build -q
 
 # 闪烧：双击 RESET 进入 Bootloader，拖拽 build/zephyr/zmk.uf2
 ```

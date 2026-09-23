@@ -4,6 +4,7 @@
 */
 
 #include <input/processors.dtsi>
+#include <input/processors/runtime-input-processor.dtsi>
 #include <dt-bindings/zmk/mouse.h>
 #include <dt-bindings/zmk/behaviors.h>
 #include <dt-bindings/zmk/input_transform.h>
@@ -24,6 +25,27 @@
 &lt {
     flavor = "balanced";
     tapping-term-ms = <200>;
+};
+
+/*
+ * DYA Studio stores edits to these processors in flash. Defaults retain the
+ * previous config's 0.8x pointer speed, XY swap, and 1:16 inverted scroll.
+ */
+&mouse_runtime_input_processor {
+    scale-multiplier = <4>;
+    scale-divisor = <5>;
+    xy-swap-enabled;
+};
+
+&scroll_runtime_input_processor {
+    x-codes = <INPUT_REL_X>;
+    y-codes = <INPUT_REL_Y>;
+    xy-swap-enabled;
+    y-invert;
+    xy-to-scroll-enabled;
+    scale-multiplier = <1>;
+    scale-divisor = <16>;
+    active-layers = <2>; // scroll_layer (layer 1)
 };
 
 / {

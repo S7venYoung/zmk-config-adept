@@ -42,7 +42,9 @@
 
     trackball: trackball@0 {
         status = "okay";
-        compatible = "pixart,pmw3610";
+        // DYA Studio-enabled PMW3610 driver. It exposes live sensor tuning
+        // and diagnostics through DYA Studio.
+        compatible = "cormoran,pmw3610";
         reg = <0>;
         spi-max-frequency = <2000000>;
         irq-gpios = <&gpio1 15 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>; // MOT P1.15
