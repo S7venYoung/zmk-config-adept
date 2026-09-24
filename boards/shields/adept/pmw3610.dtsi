@@ -53,7 +53,6 @@
         x-input-code = <INPUT_REL_X>;
         y-input-code = <INPUT_REL_Y>;
 
-        // force-awake will cause warping and cursor jumping. Don't recommend now.
-        force-high-performance;
+        // The DYA driver manages PMW3610 performance and sleep states itself.
     };
 };
