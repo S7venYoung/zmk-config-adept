@@ -23,7 +23,10 @@ jobs:
       - name: Collect firmware
         run: |
           mkdir -p artifacts
-          find build -type f -path '*/zephyr/zmk.uf2' -exec cp {} artifacts/ \;
+          find build -type f -path '*/zephyr/zmk.uf2' | while read -r firmware; do
+            target="$(basename "$(dirname "$(dirname "$firmware")")")"
+            cp "$firmware" "artifacts/${target}.uf2"
+          done
       - uses: actions/upload-artifact@v4
         with:
           name: firmware
